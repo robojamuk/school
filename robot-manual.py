@@ -15,6 +15,7 @@ import robotlibcamjam as robot # IMPORT ROBOTMASTER FOR OUR ROBOT CONTROL FUNCTI
 def signal_handler(signal, frame):
         print('Caught signal')
         robot.Shutdown()
+        curses.endwin()
         sys.exit(0)
 
 signal.signal(signal.SIGINT, signal_handler)
@@ -38,6 +39,7 @@ def Run():
     dir = ' '
     while dir != ord('q'):
         stdscr.refresh()
+        last_dir = dir
         dir = stdscr.getch() 
         stdscr.addch(20,25,dir)
         
@@ -68,9 +70,11 @@ def Run():
             stdscr.addstr(1,10,"Stop      ")
             robot.StopMotors()
             interval = time.time() - startTime
-            print(action + "(" + str(interval) + ")")
-        
-        time.sleep(0.04)
+#            print(action + "(" + str(interval) + ")")
+        if (dir != last_dir) and (dir != int('-1')):
+            time.sleep(0.25)
+        else:
+            time.sleep(0.03)
         
     curses.nocbreak()
     stdscr.keypad(0)
